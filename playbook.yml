@@ -1,0 +1,33 @@
+- name: Setup HomeBridge + Plex
+  hosts: media-server
+  become: true
+
+  tasks:
+    - name: Install Docker and Compose
+      apt:
+        name:
+          - docker.io
+          - docker-compose
+        state: present
+        update_cache: yes
+
+    - name: Create app directory
+      file:
+        path: /opt/home-server
+        state: directory
+        mode: "0755"
+
+    - name: Copy docker-compose config
+      copy:
+        src: docker-compose.yml
+        dest: /opt/home-server/docker-compose.yml
+
+    - name: Copy environment variables
+      copy:
+        src: .env
+        dest: /opt/home-server/.env
+
+    - name: Start services via docker-compose
+      command: docker-compose up -d
+      args:
+        chdir: /opt/home-server
