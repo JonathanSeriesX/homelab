@@ -2,6 +2,7 @@
 services:
   homebridge:
     image: homebridge/homebridge:latest
+    container_name: homiebridge
     restart: unless-stopped
     network_mode: host
     volumes:
