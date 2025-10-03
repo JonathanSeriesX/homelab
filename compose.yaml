@@ -45,14 +45,16 @@ services:
       - 6881:6881/udp
     restart: unless-stopped
   webdav:
-    image: bytemark/webdav
     container_name: webdav
-    restart: always
+    image: ugeek/webdav:arm
     ports:
-      - "80:80"
-    environment:
-      AUTH_TYPE: NoAuth
-      #USERNAME: jonathan
-      #PASSWORD: null
+      - 80:80
     volumes:
-      - /media/jonathan/Downloads:/var/lib/dav
+      - /media/jonathan/Downloads:/media
+    environment:
+      - USERNAME=webdav
+      - PASSWORD=webdav
+      - UID=1000
+      - GID=1000
+      - TZ=Europe/Lisbon
+    restart: unless-stopped
