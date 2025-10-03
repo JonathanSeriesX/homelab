@@ -45,16 +45,12 @@ services:
       - 6881:6881/udp
     restart: unless-stopped
   webdav:
-    container_name: webdav
-    image: ugeek/webdav:arm
-    ports:
-      - 80:80
-    volumes:
-      - /media/jonathan/Downloads:/media
-    environment:
-      - USERNAME=webdav
-      - PASSWORD=webdav
-      - UID=1000
-      - GID=1000
-      - TZ=Europe/Lisbon
+    container_name: nginx-webdav
     restart: unless-stopped
+    environment:
+      - WEBDAV_USERS=webdav:webdav
+    ports:
+      - "80:80"
+    volumes:
+      - "/media/jonathan/Downloads:/var/www/webdav"
+    image: loganmarchione/docker-webdav-nginx:latest
