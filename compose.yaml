@@ -46,6 +46,7 @@ services:
     restart: unless-stopped
   webdav:
     image: bytemark/webdav
+    container_name: webdav
     restart: always
     ports:
       - "80:80"
