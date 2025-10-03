@@ -21,7 +21,8 @@ jobs:
           host: ${{ secrets.PI_HOST }}
           username: ${{ secrets.PI_USER }}
           key: ${{ secrets.PI_SSH_KEY }}
-          script: cd homelab
+          script: |
+            cd homelab
             git pull
             docker compose pull
             docker compose up -d
