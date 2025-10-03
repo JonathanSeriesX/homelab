@@ -1,18 +1,20 @@
-- name: Setup HomeBridge + Plex
-  hosts: media-server
+- hosts: pis
+  roles:
+    - geerlingguy.docker
   become: true
-
   tasks:
-    - name: Install Docker and Compose
-      apt:
-        name:
-          - docker.io
-          - docker-compose
-        state: present
-        update_cache: yes
+    # something something docker install
+    - name: Clone homelab
+      become: false
+      git:
+        repo: "git@github.com:you/homelab.git"
+        dest: /srv/homelab
+        version: main
+        accept_hostkey: yes
 
-    - name: Start services via docker-compose
-      command: docker-compose up -d
-      #args:
-      #  chdir:
-# WIP
+    - name: Docker compose up
+      become: false
+      shell: |
+        cd /srv/homelab
+        docker compose pull || true
+        docker compose up -d

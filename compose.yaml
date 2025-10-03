@@ -44,3 +44,14 @@ services:
       - 6881:6881
       - 6881:6881/udp
     restart: unless-stopped
+  webdav:
+    image: bytemark/webdav
+    restart: always
+    ports:
+      - "80:80"
+    environment:
+      AUTH_TYPE: NoAuth
+      #USERNAME: jonathan
+      #PASSWORD: null
+    volumes:
+      - /media/jonathan/Downloads:/var/lib/dav
