@@ -2,7 +2,7 @@
 name: deploy-pi
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -10,10 +10,10 @@ jobs:
       - name: Tailscale
         uses: tailscale/github-action@v3
         with:
-          targets: raspberrypi.tail13818a.ts.net
+          targets: raspberrypi.possum-everest.ts.net
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          use-cache: 'true'
+          use-cache: "true"
       - name: SSH to Pi and deploy
         uses: appleboy/ssh-action@v1
         with:
