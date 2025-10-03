@@ -13,6 +13,7 @@ jobs:
           targets: raspberrypi.possum-everest.ts.net
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
           use-cache: "true"
       - name: SSH to Pi and pull there
         uses: appleboy/ssh-action@v1
