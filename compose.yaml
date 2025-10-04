@@ -44,13 +44,17 @@ services:
       - 6881:6881
       - 6881:6881/udp
     restart: unless-stopped
-  webdav:
-    container_name: nginx-webdav
-    restart: unless-stopped
+  samba:
+    image: dockurr/samba
+    container_name: samba
     environment:
-      - WEBDAV_USERS=webdav:webdav
+      UID: "1000"
+      GID: "1000"
+      NAME: "Raspberry Pie"
+      USER: "samba"
+      PASS: "secret"
     ports:
-      - "80:80"
+      - 445:445
     volumes:
-      - "/media/jonathan/Downloads:/var/www/webdav"
-    image: loganmarchione/docker-webdav-nginx:latest
+      - /media/jonathan/Downloads:/storage
+    restart: always
