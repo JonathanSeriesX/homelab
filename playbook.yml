@@ -8,6 +8,7 @@
     docker_add_repo: true
     docker_users:
       - jonathan
+    drive_uuid: "d67323ef-b79f-451a-b623-e94a717e87bb"
 
   pre_tasks:
     - name: Update apt cache and upgrade packages
@@ -48,6 +49,15 @@
         accept_hostkey: yes
         update: yes
       register: git_result
+
+    - name: Mount Downloads drive
+      become: true
+      ansible.posix.mount:
+        path: /media/jonathan/Downloads
+        src: "{{ drive_uuid }}"
+        fstype: ext4
+        opts: defaults,noatime,nofail
+        state: mounted
 
     - name: Bring up Docker Compose stack
       become: false
