@@ -1,20 +1,56 @@
-- hosts: pis
+- name: Bootstrap Raspberry Pi homelab
+  hosts: homelab
+  become: true
+
+  vars:
+    repo_url: "https://github.com/JonathanSeriesX/homelab.git"
+    repo_dest: "~/homelab"
+    docker_add_repo: true
+    docker_users:
+      - jonathan
+
+  pre_tasks:
+    - name: Update apt cache and upgrade packages
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: dist
+        autoremove: yes
+      tags: update
+
   roles:
     - geerlingguy.docker
-  become: true
+
   tasks:
-    # something something docker install
-    - name: Clone homelab
+    - name: Ensure cgroup flags on kernel cmdline
+      become: true
+      ansible.builtin.lineinfile:
+        path: /boot/firmware/cmdline.txt
+        regexp: "^(.*)$"
+        line: '\1 cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1'
+        backrefs: true
+      register: cmdline_edit
+
+    - name: Reboot if cmdline changed
+      become: true
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+      when: cmdline_edit is changed
+
+    - name: Clone or update homelab repo
       become: false
-      git:
-        repo: "git@github.com:you/homelab.git"
-        dest: /srv/homelab
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ repo_dest }}"
         version: main
         accept_hostkey: yes
+        update: yes
+      register: git_result
 
-    - name: Docker compose up
+    - name: Bring up Docker Compose stack
       become: false
-      shell: |
-        cd /srv/homelab
-        docker compose pull || true
-        docker compose up -d
+      community.docker.docker_compose_v2:
+        project_src: "{{ repo_dest }}"
+        state: present
+        pull: always
+        remove_orphans: yes
+        recreate: auto
